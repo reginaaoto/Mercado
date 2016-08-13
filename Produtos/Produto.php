@@ -1,14 +1,20 @@
 <?php
 
+
 namespace Elaborata\Mercado\Produtos;
+
+/**
+ * class Entity
+ * para DataMapper
+ */
 
 class Produto 
 {
-    private $codigo=0;
-    private $nome='';
-    private $preco_unitario=0.0;
-    private $qtd_estoque=0;
-    private $desconto=0.0;
+    private $codigo;
+    private $nome = '';
+    private $quantidade = 0;
+    private $precoUnitario = 0;
+    private $desconto = 0;
     
     public function getCodigo() 
     {
@@ -20,14 +26,14 @@ class Produto
         return $this->nome;
     }
 
-    public function getPreco_unitario() 
+    public function getPrecoUnitario() 
     {
-        return $this->preco_unitario;
+        return $this->precoUnitario;
     }
 
-    public function getQtd_estoque() 
+    public function getQuantidade() 
     {
-        return $this->qtd_estoque;
+        return $this->quantidade;
     }
 
     public function getDesconto() 
@@ -45,14 +51,14 @@ class Produto
         $this->nome = $nome;
     }
 
-    public function setPreco_unitario($preco_unitario) 
+    public function setPrecoUnitario($precoUnitario) 
     {
-        $this->preco_unitario = $preco_unitario;
+        $this->precoUnitario = $precoUnitario;
     }
 
-    public function setQtd_estoque($qtd_estoque) 
+    public function setQuantidade($quantidade) 
     {
-        $this->qtd_estoque = $qtd_estoque;
+        $this->quantidade = $quantidade;
     }
 
     public function setDesconto($desconto) 
