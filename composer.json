@@ -1,0 +1,13 @@
+{
+    "name": "elaborata/mercado",
+    "description": "Exemplo em aula",
+    "authors": [
+        {
+            "name": "Regina",
+            "email": "reginaaoto@gmail.com"
+        }
+    ],
+    "require": {
+        "swiftmailer/swiftmailer": "^5.4"
+    }
+}

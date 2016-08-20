@@ -3,6 +3,10 @@
 
 require_once './Produtos/Produto.php';
 require_once './Produtos/Estoque.php';
+require_once './DB/Table.php';
+require_once './DB/ProdutosTable.php';
+
+require_once './vendor/autoload.php'; /*chama uma unica vez todos os pacotes baixados pelo composer*/
 
 use \Elaborata\Mercado\Produtos\Produto;
 use \Elaborata\Mercado\Produtos\Estoque;
@@ -28,12 +32,6 @@ $estoque =  Estoque::getInstance();
 $estoque->addEstoque($prod1);
 $estoque->addEstoque($prod2);
 print_r($estoque);
-
-/*foreach($estoque->getEstoque() as $produto)
-{
-   print_r('<br>Produto: '.$produto->getCodigo().', '.$produto->getNome().', '.$produto->getQuantidade().', '.$produto->getPrecoUnitario().', '.$produto->getDesconto());  
-} */   
-
 
 /* pesquisa e retorna se houver ou false */
 $estoque->procuraProduto('76321'); //Lasanha

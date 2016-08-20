@@ -4,16 +4,21 @@
 namespace Elaborata\Mercado\Produtos;
 
 use Elaborata\Mercado\Produtos\Produto;
-
+use Elaborata\Mercado\DB\ProdutosTable;
 
 class Estoque {
     
     static private $instance = null;
-    private $produtos = array();
+    private $produtos;
     
     private function __construct() 
     {
-       
+        $dsn = 'mysql:dbname=PHPII;host=127.0.0.1';
+        $user = 'root';
+        $password = 'elaborata';
+        $pdo = new \PDO($dsn,$user,$password); 
+        
+        $this->produtos = new ProdutosTable($pdo);
     }
 
     // Acessa a funcao sem precisar criar o objeto
@@ -37,9 +42,11 @@ class Estoque {
     {
         $prodEstoque = $this->retornaProduto($produto);
        
+        //var_dump($prodEstoque);die();
+        
         if ($prodEstoque==null)
         {
-            array_push($this->produtos, $produto);
+            $this->produtos->inserir($produto);
         }
         else
         {
@@ -54,6 +61,8 @@ class Estoque {
             
             $preco = ($produto->getPrecoUnitario() != null)? $produto->getPrecoUnitario() : $prodEstoque->getPrecoUnitario();
             $prodEstoque->setPrecoUnitario($preco);
+            
+            $this->produtos->atualizar($prodEstoque);
         }
         
         return $this;
@@ -73,42 +82,22 @@ class Estoque {
     
     public function deletaEstoque($produto,$quantidade)
     {
-        $quantAnterior = $produto->getQuantidade();
+        $prodEstoque =$this->retornaProduto($produto);
+        $quantAnterior = $prodEstoque->getQuantidade();
         
         if (($quantAnterior - $quantidade)<0)
         {
             throw new \Exception("Nao existe em estoque a quantidade informada."); //O programa finaliza
         }    
         
-        $prodEstoque =$this->retornaProduto($produto);
+       
         $prodEstoque->setQuantidade($quantAnterior - $quantidade);
+        
+        $this->produtos->atualizar($prodEstoque);
+        
         return $this;                
     }        
-    
-    public function deletaEstoqueEx1($produto,$quantidade)
-    {  
-       echo '<br><br>Remover do estoque: '.$produto->getNome().' quantidade:'.$quantidade ;
-       foreach($this->produtos as $item)
-        {
-           if($produto== $item)
-           {
-               
-               echo '<br>'.$produto->getNome().' tem em estoque: '.$produto->getQuantidade();
-               $totalEstoque = $produto->getQuantidade()-$quantidade;
-               
-               if ($totalEstoque<0)
-               {
-                    echo '<br>Alerta: '.$produto->getNome().' nao tem estoque suficiente para a quantidade solicitada.'; 
-               } 
-               else
-               {
-                    $produto->setQuantidade($totalEstoque);
-                    echo '<br>'.$produto->getNome().' teve o estoque atualizado: '.$produto->getQuantidade();
-               }
-           }
-        }    
-    }
-    
+       
     /**
      * Retorna o produto com o codigo informado ou null se nao achar
      * @param string $codigo
@@ -117,42 +106,10 @@ class Estoque {
     
     public function procuraProduto($codigo)
     {
-        foreach($this->produtos as $produto)
-        {
-            if($produto->getCodigo() == $codigo)
-            {    
-                return $produto;
-            }    
-        }    
-        return null;        
+        $result = $this->produtos->buscar($codigo);
+        return ($result != false)? $result : null;
     }        
-    
-    public function procuraProdutoEx1($codigo)
-    { 
-       $bAchou = false; 
-       $nomeProduto = '';
         
-       echo '<br><br>Realizar busca de produto com o codigo '.$codigo.':';
-         
-        foreach($this->produtos as $produto)
-        {
-           if($produto->getCodigo() == $codigo)
-           {
-               $nomeProduto = '<br>Produto localizado: '.$produto->getNome();
-               $bAchou = true;
-           }
-        }    
-        
-        if ($bAchou)
-        {
-           echo $nomeProduto;
-        }
-        else
-        {
-            echo '<br>Nenhum produto foi localizado com o codigo '.$codigo;
-        }
-    }    
-    
     /**
      * 
      * @param Produto $produto
@@ -161,16 +118,6 @@ class Estoque {
    
     private function retornaProduto(Produto $produto)
     {
-        foreach($this->produtos as $prodEstoque)
-        {
-            if($prodEstoque->getCodigo() == $produto->getCodigo())
-            {   
-                return $prodEstoque;                
-            }
-        }       
-        
-        return null;
-    }        
-    
-    
+        return $result = $this->procuraProduto($produto->getCodigo());
+    }          
 }
